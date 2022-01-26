@@ -1,0 +1,94 @@
+---
+title: "R-eproducibility Assignment"
+output: html_document
+---
+Project Info:
+# January 24, 2022
+# https://github.com/alanamcphail/BIOL432Assignement3AlanaMcPhail.git
+
+## Setting wokring directory
+```{r}
+setwd("/Users/alanamcphail/BIOL432Assignement3AlanaMcPhail/InputData")
+```
+
+## Loading packages
+```{r}
+library(dplyr)
+```
+## Loading data 
+```{r}
+fallo <- read.csv("FallopiaData.csv")
+```
+
+## Removing rows with 'Total' biomass < 60
+```{r}
+Fallo1 <- subset(fallo, Total>60 | Total==60)
+```
+
+## Reordering the columns and only keeping these columns
+```{r}
+Fallo2 <- select(Fallo1, Total, Taxon, Scenario, Nutrients)
+```
+
+## Making a new column which converts Total into grams and replaces total 
+```{r}
+Fallo3 <- mutate(Fallo2, TotalG = Total/1000)
+Fallo4 <- select(Fallo3, TotalG, Taxon, Scenario, Nutrients)
+```
+
+## Making custom funciton
+```{r}
+myFunction <- function(var1, var2){
+  if(var2 == "Average"){
+    X <- mean(var1)
+    print(paste(X))
+  } else if(var2 == "Sum") {
+    X <- sum(var1)
+    print(paste(X))
+  } else if(var2 == "Observations"){
+    X <- length(unique(var1))
+    print(paste(X))
+  } else{
+      print("Error")
+    }
+  }
+```
+
+
+## Testing funcition
+```{r}
+myFunction(var1 = Fallo1$PotNum, var2="Average")
+```
+
+## Using function to count number of observations in the "Taxon" column 
+```{r}
+myFunction(var1 = Fallo1$Taxon, var2 ="Observations")
+```
+
+
+## Creating subsets of the two nutrient concentrations
+```{r}
+low <- subset(Fallo4, Nutrients == "low")
+high <- subset(Fallo4, Nutrients == "high")
+```
+
+## Using myFunction to find TotalG mean of the low nutrients concentration
+```{r}
+myFunction(var1 = low$TotalG, var2 = "Average")
+```
+
+## Using myFunction to find TotalG mean for the high nutrients concentration
+```{r}
+myFunction(var1 = high$TotalG, var2 = "Average")
+```
+
+```{r}
+write.csv(Fallo4, "WrangledData.csv")
+```
+
+
+
+
+
+
+
